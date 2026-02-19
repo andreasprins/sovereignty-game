@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --suse-dark: #0C322C;
+  --suse-dark-95: rgba(12, 50, 44, 0.95);
+  --suse-dark-90: rgba(12, 50, 44, 0.90);
+  --suse-dark-85: rgba(12, 50, 44, 0.85);
+  --suse-dark-lighter: #0F3D35;
+  --suse-dark-surface: #11453C;
+  --suse-green: #30BA78;
+  --suse-orange: #FE7C3F;
+  --suse-text: #F0F0F0;
+  --suse-text-muted: #8FAFA6;
+  --suse-border: rgba(48, 186, 120, 0.15);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'SUSE', sans-serif;
+  background-color: var(--suse-dark);
+  color: var(--suse-text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--suse-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(48, 186, 120, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(48, 186, 120, 0.5);
+}
+
+.bg-mesh {
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(48, 186, 120, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(48, 186, 120, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(254, 124, 63, 0.02) 0%, transparent 50%);
+}
+
+.topo-lines {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 60px,
+      rgba(48, 186, 120, 0.04) 60px,
+      rgba(48, 186, 120, 0.04) 61px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 60px,
+      rgba(48, 186, 120, 0.03) 60px,
+      rgba(48, 186, 120, 0.03) 61px
+    );
+}
+
+.gradient-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--suse-green) 50%, transparent 100%);
+  opacity: 0.3;
+}
+
+.card-glow {
+  transition: all 0.3s ease;
+}
+
+.card-glow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(48, 186, 120, 0.15), 0 0 40px rgba(48, 186, 120, 0.05);
+  border-color: rgba(48, 186, 120, 0.4);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
+}
+
+@keyframes starFill {
+  from { opacity: 0; transform: scale(0.5); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.star-animate {
+  animation: starFill 0.3s ease forwards;
+  opacity: 0;
+}
+
+.expand-transition {
+  transition: max-height 0.4s ease, opacity 0.3s ease;
+  overflow: hidden;
+}
