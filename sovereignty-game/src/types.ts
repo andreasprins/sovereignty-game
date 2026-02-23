@@ -2,6 +2,7 @@ export interface Question {
   id: number;
   category: string;
   categoryIcon: string;
+  scenario?: string;   // 1–2 sentence context shown above the question
   question: string;
   options: string[];
   correct: number; // index 0–3

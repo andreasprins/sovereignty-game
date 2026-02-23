@@ -160,6 +160,7 @@ html, body, #root {
   position: relative;
   overflow: hidden;
   transition: transform 0.1s, box-shadow 0.2s;
+  min-height: 52px;
 }
 .answer-btn::before {
   content: '';
@@ -215,7 +216,7 @@ html, body, #root {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.15); }
 }
-.streak-badge { animation: streakPulse 0.8s ease-in-out infinite; }
+.streak-badge { animation: streakPulse 0.8s ease-in-out 3; }
 
 /* ── Screen transitions ─────────────────────────────────────────────────────── */
 .screen-enter { animation: slideIn 0.35s ease-out; }
@@ -280,7 +281,7 @@ html, body, #root {
   border-radius: 999px;
   font-family: 'SUSE', sans-serif;
   font-weight: 800;
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   letter-spacing: 0.06em;
   color: #fff;
 }

@@ -16,7 +16,7 @@ const OPTION_LABELS = ['A', 'B', 'C', 'D'];
 
 export function RevealScreen({ question, answer, questionNumber, totalQuestions, score, onNext }: RevealScreenProps) {
   const [showPoints, setShowPoints] = useState(false);
-  const [countdown, setCountdown] = useState(4);
+  const [countdown, setCountdown] = useState(6);
 
   useEffect(() => {
     const t1 = setTimeout(() => setShowPoints(true), 200);
@@ -91,8 +91,13 @@ export function RevealScreen({ question, answer, questionNumber, totalQuestions,
                 <span className="font-orbitron font-bold text-xs w-5 h-5 rounded flex items-center justify-center shrink-0 mt-0.5" style={{ background: border, color: '#061a16' }}>
                   {OPTION_LABELS[idx]}
                 </span>
-                <span className="text-xs leading-snug" style={{ color: textColor }}>{opt}</span>
-                {isTheCorrect && <CheckCircle2 className="w-3 h-3 shrink-0 mt-0.5" style={{ color: '#30ba78' }} />}
+                <span className="flex-1 text-xs leading-snug" style={{ color: textColor }}>{opt}</span>
+                {isTheCorrect && (
+                  <span className="font-orbitron text-xs font-bold shrink-0" style={{ color: '#30ba78' }}>✓ CORRECT</span>
+                )}
+                {isTheChosen && !isTheCorrect && (
+                  <span className="font-orbitron text-xs font-bold shrink-0" style={{ color: '#e8274b' }}>✗ WRONG</span>
+                )}
               </div>
             );
           })}

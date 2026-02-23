@@ -57,34 +57,17 @@ export function QuestionScreen({
   const progress = questionNumber / totalQuestions;
 
   return (
-    <div className="relative z-10 flex flex-col min-h-screen px-4 py-4 md:py-6 gap-4 max-w-4xl mx-auto w-full">
-      {/* Header bar */}
-      <div className="flex items-center justify-between glass rounded-xl px-4 py-3 neon-border-cyan">
-        {/* Question progress */}
-        <div className="flex flex-col gap-1">
-          <span className="font-orbitron text-xs tracking-widest" style={{ color: '#fe7c3f' }}>
-            QUESTION
-          </span>
-          <span className="font-orbitron font-bold text-lg md:text-2xl neon-green">
-            {questionNumber} / {totalQuestions}
-          </span>
-          <div className="w-24 h-1 rounded-full bg-white/10 overflow-hidden">
-            <div
-              className="h-full rounded-full transition-all duration-300"
-              style={{ width: `${progress * 100}%`, background: 'linear-gradient(90deg, #30ba78, #fe7c3f)' }}
-            />
-          </div>
+    <div className="relative z-10 flex flex-col min-h-screen px-4 py-4 gap-3 max-w-4xl mx-auto w-full">
+      {/* Header bar: question counter + score */}
+      <div className="flex items-center justify-between glass rounded-xl px-4 py-2 neon-border-cyan">
+        <div className="flex flex-col gap-0.5">
+          <span className="font-orbitron text-xs tracking-widest" style={{ color: '#fe7c3f' }}>QUESTION</span>
+          <span className="font-orbitron font-bold text-lg neon-green">{questionNumber} / {totalQuestions}</span>
         </div>
-
-        {/* Timer */}
-        <TimerRing seconds={timeLeft} total={GAME_CONFIG.timePerQuestion} size={80} />
-
-        {/* Score + streak */}
-        <div className="flex flex-col items-end gap-1">
+        <TimerRing seconds={timeLeft} total={GAME_CONFIG.timePerQuestion} size={64} />
+        <div className="flex flex-col items-end gap-0.5">
           <span className="font-orbitron text-xs tracking-widest" style={{ color: '#fe7c3f' }}>SCORE</span>
-          <span className="font-orbitron font-bold text-lg md:text-2xl neon-green">
-            {score.toLocaleString()}
-          </span>
+          <span className="font-orbitron font-bold text-lg neon-green">{score.toLocaleString()}</span>
           {streak >= 2 && (
             <div className="streak-badge flex items-center gap-1 text-xs font-orbitron" style={{ color: '#f5c842', textShadow: '0 0 8px #f5c842' }}>
               <Flame className="w-3 h-3" />
@@ -94,8 +77,16 @@ export function QuestionScreen({
         </div>
       </div>
 
+      {/* Full-width progress bar */}
+      <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
+        <div
+          className="h-full rounded-full transition-all duration-300"
+          style={{ width: `${progress * 100}%`, background: 'linear-gradient(90deg, #30ba78, #fe7c3f)' }}
+        />
+      </div>
+
       {/* Category badge */}
-      <div className="text-center">
+      <div>
         <span
           className="inline-block font-orbitron text-xs tracking-widest px-3 py-1 rounded-full"
           style={{
@@ -108,18 +99,26 @@ export function QuestionScreen({
         </span>
       </div>
 
-      {/* Question text */}
-      <div className="glass rounded-xl px-5 py-5 neon-border-cyan text-center flex-shrink-0">
+      {/* Scenario + Question text */}
+      <div className="glass rounded-xl px-5 py-4 neon-border-cyan text-center flex-shrink-0 space-y-2">
+        {question.scenario && (
+          <p
+            className="font-orbitron leading-snug italic"
+            style={{ fontSize: 'clamp(0.7rem, 1.8vw, 0.9rem)', color: 'rgba(214,240,229,0.55)' }}
+          >
+            {question.scenario}
+          </p>
+        )}
         <p
           className="font-orbitron font-semibold leading-snug"
-          style={{ fontSize: 'clamp(0.9rem, 2.5vw, 1.4rem)', color: '#d6f0e5' }}
+          style={{ fontSize: 'clamp(1rem, 2.5vw, 1.4rem)', color: '#d6f0e5' }}
         >
           {question.question}
         </p>
       </div>
 
-      {/* Answer grid */}
-      <div className="grid grid-cols-2 gap-2 flex-1">
+      {/* Answer grid — 1 col on mobile, 2 col on sm+ */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 flex-1">
         {question.options.map((option, idx) => (
           <button
             key={idx}
@@ -129,6 +128,7 @@ export function QuestionScreen({
             style={{
               background: CARD_STYLE.bg,
               border: `1px solid ${CARD_STYLE.border}`,
+              minHeight: 52,
             }}
           >
             <span
@@ -146,7 +146,7 @@ export function QuestionScreen({
             </span>
             <span
               className="font-orbitron font-semibold leading-snug"
-              style={{ fontSize: 'clamp(0.9rem, 2.5vw, 1.4rem)', color: '#d6f0e5' }}
+              style={{ fontSize: 'clamp(1rem, 2.5vw, 1.4rem)', color: '#d6f0e5' }}
             >
               {option}
             </span>

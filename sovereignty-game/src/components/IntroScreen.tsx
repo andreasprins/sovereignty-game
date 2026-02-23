@@ -83,7 +83,7 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
       <form onSubmit={handleSubmit} className="w-full max-w-sm flex flex-col gap-4">
         <div>
           <label className="block font-orbitron text-xs tracking-widest mb-2" style={{ color: '#fe7c3f' }}>
-            YOUR AGENT NAME
+            ENTER YOUR NAME
           </label>
           <input
             type="text"
@@ -92,7 +92,6 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
             maxLength={24}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            autoFocus
           />
         </div>
         <button
@@ -112,6 +111,12 @@ export function IntroScreen({ onStart }: IntroScreenProps) {
           <Zap className="inline-block mr-2 w-4 h-4" />
           PLAY NOW
         </button>
+        {name.trim().length === 0 && (
+          <p className="font-orbitron text-xs text-center opacity-40">Type your name above to begin</p>
+        )}
+        <p className="font-orbitron text-xs text-center opacity-30">
+          Your name is stored only for today's leaderboard.
+        </p>
       </form>
 
       {/* Today's leaderboard preview */}

@@ -78,10 +78,10 @@ export function FinalScreen({ state, questions, correctCount, onLeaderboard, onP
           <span className="suse-pill">POWERED BY SUSE</span>
         </div>
         <p className="font-orbitron text-xs tracking-widest mb-1" style={{ color: '#fe7c3f', textShadow: '0 0 8px #fe7c3f' }}>
-          MISSION COMPLETE
-        </p>
-        <h1 className="font-orbitron font-black uppercase" style={{ fontSize: 'clamp(1.8rem, 6vw, 3.5rem)', color: '#d6f0e5' }}>
           GAME OVER
+        </p>
+        <h1 className="font-orbitron font-black uppercase" style={{ fontSize: 'clamp(1.8rem, 6vw, 3.5rem)', color: '#30ba78', textShadow: '0 0 20px #30ba78' }}>
+          MISSION COMPLETE
         </h1>
       </div>
 
@@ -129,7 +129,7 @@ export function FinalScreen({ state, questions, correctCount, onLeaderboard, onP
         <div className="px-4 py-2 border-b border-white/10">
           <span className="font-orbitron text-xs tracking-widest neon-green">ANSWER BREAKDOWN</span>
         </div>
-        <div className="divide-y divide-white/5">
+        <div className="divide-y divide-white/5 max-h-52 overflow-y-auto">
           {state.answers.map((ans, i) => {
             const q = questions[ans.questionIndex];
             return (

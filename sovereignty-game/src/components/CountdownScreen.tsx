@@ -44,7 +44,7 @@ export function CountdownScreen({ onDone }: CountdownScreenProps) {
         className="font-orbitron text-xs tracking-widest opacity-60"
         style={{ color: '#30ba78' }}
       >
-        SPEED + ACCURACY = MAXIMUM SCORE
+        CORRECT + FAST = MAX PTS • STREAK = BONUS
       </p>
     </div>
   );
