@@ -15,13 +15,8 @@ interface QuestionScreenProps {
 }
 
 const OPTION_LABELS = ['A', 'B', 'C', 'D'];
-// SUSE palette: green, orange, teal, deep green
-const OPTION_COLORS = [
-  { bg: 'rgba(48,186,120,0.12)',  border: 'rgba(48,186,120,0.5)',  hover: '#30ba78' },
-  { bg: 'rgba(254,124,63,0.12)', border: 'rgba(254,124,63,0.5)', hover: '#fe7c3f' },
-  { bg: 'rgba(20,180,160,0.12)', border: 'rgba(20,180,160,0.5)', hover: '#14b4a0' },
-  { bg: 'rgba(95,212,160,0.10)', border: 'rgba(95,212,160,0.4)', hover: '#5fd4a0' },
-];
+const CARD_STYLE = { bg: 'rgba(12,50,44,0.7)', border: 'rgba(48,186,120,0.3)' };
+const LABEL_COLORS = ['#30ba78', '#fe7c3f', '#5fd4a0', '#f5c842'];
 
 export function QuestionScreen({
   question,
@@ -125,34 +120,38 @@ export function QuestionScreen({
 
       {/* Answer grid */}
       <div className="grid grid-cols-2 gap-2 flex-1">
-        {question.options.map((option, idx) => {
-          const col = OPTION_COLORS[idx];
-          return (
-            <button
-              key={idx}
-              onClick={() => handleAnswer(idx)}
-              disabled={selected !== null}
-              className="answer-btn rounded-lg px-3 py-2 text-left flex items-center gap-2 transition-all"
+        {question.options.map((option, idx) => (
+          <button
+            key={idx}
+            onClick={() => handleAnswer(idx)}
+            disabled={selected !== null}
+            className="answer-btn rounded-lg px-3 py-3 text-left flex items-start gap-3 transition-all"
+            style={{
+              background: CARD_STYLE.bg,
+              border: `1px solid ${CARD_STYLE.border}`,
+            }}
+          >
+            <span
+              className="font-orbitron font-black shrink-0 rounded flex items-center justify-center"
               style={{
-                background: col.bg,
-                border: `1px solid ${col.border}`,
+                fontSize: 'clamp(0.85rem, 2vw, 1.1rem)',
+                width: '1.6em',
+                height: '1.6em',
+                background: LABEL_COLORS[idx],
+                color: '#061a16',
+                boxShadow: `0 0 8px ${LABEL_COLORS[idx]}`,
               }}
             >
-              <span
-                className="font-orbitron font-bold text-xs shrink-0 w-5 h-5 rounded flex items-center justify-center"
-                style={{ background: col.border, color: '#061a16' }}
-              >
-                {OPTION_LABELS[idx]}
-              </span>
-              <span
-                className="font-medium text-xs leading-snug"
-                style={{ color: '#d6f0e5' }}
-              >
-                {option}
-              </span>
-            </button>
-          );
-        })}
+              {OPTION_LABELS[idx]}
+            </span>
+            <span
+              className="font-orbitron font-semibold leading-snug"
+              style={{ fontSize: 'clamp(0.9rem, 2.5vw, 1.4rem)', color: '#d6f0e5' }}
+            >
+              {option}
+            </span>
+          </button>
+        ))}
       </div>
     </div>
   );
