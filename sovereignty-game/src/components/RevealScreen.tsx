@@ -98,13 +98,6 @@ export function RevealScreen({ question, answer, questionNumber, totalQuestions,
           })}
         </div>
 
-        {/* SUSE Advice / Explanation */}
-        <div
-          className="rounded-lg px-4 py-3 text-xs leading-relaxed"
-          style={{ background: 'rgba(48,186,120,0.07)', border: '1px solid rgba(48,186,120,0.25)', color: 'rgba(214,240,229,0.9)' }}
-        >
-          {question.explanation}
-        </div>
       </div>
 
       {/* Score + Next countdown */}

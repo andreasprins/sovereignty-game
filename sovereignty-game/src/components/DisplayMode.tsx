@@ -56,30 +56,12 @@ function LeaderboardRow({ entry, index }: { entry: LeaderboardEntry; index: numb
   );
 }
 
-const TICKER_FACTS = [
-  '💡 SUSE PATHWAY 1a — Keep your Linux, change your support. SUSE Multi-Linux Support: EU-headquartered, zero OS changes.',
-  '💡 SUSE PATHWAY 2a — Broadcom acquisition tripled your VMware costs? SUSE Virtualization runs your VMs on open, auditable KVM.',
-  '💡 SUSE PATHWAY 5a — SUSE AI: run open-weight LLMs on your own hardware. Your data never leaves your firewall.',
-  '💡 CLOUD ACT: US law can compel any US-incorporated company to hand over data stored anywhere in the world.',
-  '💡 SUSE PATHWAY 4a — SUSE Application Collection: 100+ audited container images with SBOM, SLSA provenance, and license clarity.',
-  '💡 SUSE PATHWAY 3b — Crown Jewel workloads belong on-premise. SUSE Rancher Prime + SLES gives you full jurisdictional control.',
-  '💡 SUSE PATHWAY 7a — Sovereign software needs sovereign support. SUSE Sovereign Premium Support: EU engineers, EU law.',
-  '💡 SUSE PATHWAY 6a — SUSE Edge: every remote site runs autonomously, fully air-gapped if needed. SEAL-4 per site.',
-  '💡 OPEN SOURCE: Inspect • Modify • Control — the foundation of digital independence. SUSE has been open source since 1992.',
-];
-
 export function DisplayMode({ gameUrl }: DisplayModeProps) {
   const { entries, loading } = useLeaderboard('today', true);
-  const [tickerIdx, setTickerIdx] = useState(0);
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
     const id = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  useEffect(() => {
-    const id = setInterval(() => setTickerIdx((i) => (i + 1) % TICKER_FACTS.length), 8000);
     return () => clearInterval(id);
   }, []);
 
@@ -180,18 +162,6 @@ export function DisplayMode({ gameUrl }: DisplayModeProps) {
         )}
       </div>
 
-      {/* Bottom ticker */}
-      <div
-        className="fixed bottom-0 left-0 right-0 h-10 flex items-center overflow-hidden"
-        style={{ background: 'rgba(48,186,120,0.07)', borderTop: '1px solid rgba(48,186,120,0.2)' }}
-      >
-        <div className="shrink-0 font-orbitron text-xs px-4 neon-green tracking-widest">SUSE INSIGHT</div>
-        <div className="flex-1 overflow-hidden">
-          <div key={tickerIdx} className="ticker-inner font-orbitron text-xs whitespace-nowrap" style={{ color: 'rgba(214,240,229,0.8)' }}>
-            {TICKER_FACTS[tickerIdx]}
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

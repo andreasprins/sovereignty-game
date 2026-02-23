@@ -124,7 +124,7 @@ export function QuestionScreen({
       </div>
 
       {/* Answer grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 flex-1">
+      <div className="grid grid-cols-2 gap-2 flex-1">
         {question.options.map((option, idx) => {
           const col = OPTION_COLORS[idx];
           return (
@@ -132,21 +132,20 @@ export function QuestionScreen({
               key={idx}
               onClick={() => handleAnswer(idx)}
               disabled={selected !== null}
-              className="answer-btn rounded-xl px-4 py-4 text-left flex items-start gap-3 transition-all"
+              className="answer-btn rounded-lg px-3 py-2 text-left flex items-center gap-2 transition-all"
               style={{
                 background: col.bg,
                 border: `1px solid ${col.border}`,
-                minHeight: 72,
               }}
             >
               <span
-                className="font-orbitron font-bold text-base md:text-lg shrink-0 w-7 h-7 rounded-md flex items-center justify-center"
+                className="font-orbitron font-bold text-xs shrink-0 w-5 h-5 rounded flex items-center justify-center"
                 style={{ background: col.border, color: '#061a16' }}
               >
                 {OPTION_LABELS[idx]}
               </span>
               <span
-                className="font-medium text-sm md:text-base leading-snug"
+                className="font-medium text-xs leading-snug"
                 style={{ color: '#d6f0e5' }}
               >
                 {option}
