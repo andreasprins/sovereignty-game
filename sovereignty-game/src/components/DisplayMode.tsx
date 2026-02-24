@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useLeaderboard } from '../hooks/useLeaderboard';
-import { Trophy, Shield, Wifi } from 'lucide-react';
+import { Trophy, Wifi } from 'lucide-react';
 import { LeaderboardEntry } from '../types';
 
 interface DisplayModeProps {
@@ -22,6 +22,73 @@ function getRank(score: number) {
 }
 
 const MEDAL = ['🥇', '🥈', '🥉'];
+
+const STATEMENTS = [
+  "Somewhere, an algorithm knows you better than your mum does.",
+  "Your playlist knows things your therapist doesn't.",
+  "The terms & conditions you skipped were... interesting.",
+  "Page 47 of the T&Cs was the important one.",
+  "Is it YOUR cloud — or just someone else's server?",
+  "The cloud has a landlord. Spoiler: it's not you.",
+  "Cloud storage: your data, their rules.",
+  "Your attention was sold before you finished reading this.",
+  "In another tab, your data is being sold. Right now.",
+  "Your phone knows where you sleep. Just saying.",
+  "Your entire enterprise runs on someone else's subscription.",
+  "Your software vendor audited you last quarter. You didn't notice.",
+  "The vendor's roadmap is your roadmap. Was that the plan?",
+];
+
+type TypePhase = 'typing' | 'holding' | 'deleting';
+
+function RotatingStatement() {
+  const [idx, setIdx] = useState(0);
+  const [displayed, setDisplayed] = useState('');
+  const [phase, setPhase] = useState<TypePhase>('typing');
+
+  useEffect(() => {
+    const target = STATEMENTS[idx];
+
+    if (phase === 'typing') {
+      if (displayed.length >= target.length) {
+        setPhase('holding');
+        return;
+      }
+      const id = setTimeout(() => setDisplayed(target.slice(0, displayed.length + 1)), 45);
+      return () => clearTimeout(id);
+    }
+
+    if (phase === 'holding') {
+      const id = setTimeout(() => setPhase('deleting'), 20000);
+      return () => clearTimeout(id);
+    }
+
+    if (phase === 'deleting') {
+      if (displayed.length === 0) {
+        setIdx((i) => (i + 1) % STATEMENTS.length);
+        setPhase('typing');
+        return;
+      }
+      const id = setTimeout(() => setDisplayed((d) => d.slice(0, -1)), 20);
+      return () => clearTimeout(id);
+    }
+  }, [phase, displayed, idx]);
+
+  return (
+    <p
+      className="font-orbitron"
+      style={{
+        fontSize: '1.05rem',
+        color: 'rgba(214,240,229,0.8)',
+        lineHeight: 1.5,
+        minHeight: '4.5rem',
+      }}
+    >
+      {displayed}
+      <span className="typewriter-cursor">|</span>
+    </p>
+  );
+}
 
 function LeaderboardRow({ entry, index }: { entry: LeaderboardEntry; index: number }) {
   const rank = getRank(entry.score);
@@ -74,9 +141,6 @@ export function DisplayMode({ gameUrl }: DisplayModeProps) {
           <div className="flex justify-center mb-3">
             <span className="suse-pill" style={{ fontSize: '0.85rem', padding: '4px 14px' }}>POWERED BY SUSE</span>
           </div>
-          <div className="flex items-center justify-center gap-3 mb-3">
-            <Shield className="w-12 h-12" style={{ color: '#30ba78', filter: 'drop-shadow(0 0 12px #30ba78)' }} />
-          </div>
           <h1
             className="glitch-text font-orbitron font-black uppercase tracking-widest"
             data-text="SOVEREIGNTY"
@@ -85,14 +149,12 @@ export function DisplayMode({ gameUrl }: DisplayModeProps) {
             SOVEREIGNTY
           </h1>
           <h1
-            className="font-orbitron font-black uppercase tracking-widest"
+            className="font-orbitron font-black uppercase tracking-widest mb-5"
             style={{ fontSize: '2.8rem', color: '#fe7c3f', textShadow: '0 0 20px #fe7c3f', lineHeight: 1.1 }}
           >
             STRIKE
           </h1>
-          <p className="font-orbitron text-sm tracking-widest mt-2" style={{ color: 'rgba(214,240,229,0.6)' }}>
-            TEST YOUR DIGITAL INDEPENDENCE
-          </p>
+          <RotatingStatement />
         </div>
 
         {/* QR Code */}

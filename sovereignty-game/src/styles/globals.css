@@ -267,12 +267,17 @@ html, body, #root {
   -webkit-backdrop-filter: blur(12px);
 }
 
-/* ── Display mode ticker ───────────────────────────────────────────────────── */
-@keyframes ticker {
-  0%   { transform: translateX(100vw); }
-  100% { transform: translateX(-100%); }
+/* ── Typewriter cursor ─────────────────────────────────────────────────────── */
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
 }
-.ticker-inner { animation: ticker 25s linear infinite; }
+.typewriter-cursor {
+  color: #30ba78;
+  font-weight: 800;
+  animation: cursorBlink 0.8s step-end infinite;
+  margin-left: 1px;
+}
 
 /* ── SUSE branding pill ────────────────────────────────────────────────────── */
 .suse-pill {
