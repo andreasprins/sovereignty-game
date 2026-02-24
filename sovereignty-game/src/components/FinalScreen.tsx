@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { GameState } from '../types';
 import { Question } from '../types';
 import { db } from '../supabase';
@@ -13,16 +13,72 @@ interface FinalScreenProps {
 }
 
 const RANKS = [
-  { min: 9500, label: 'SUSE CERTIFIED SOVEREIGN', color: '#30ba78', desc: 'Peak digital sovereignty mastery — SUSE would hire you!' },
-  { min: 8000, label: 'DIGITAL FREEDOM MASTER',   color: '#fe7c3f', desc: 'Outstanding knowledge. You\'re ready for any sovereignty pathway.' },
-  { min: 6500, label: 'OPEN SOURCE GUARDIAN',     color: '#5fd4a0', desc: 'Strong advocate for open infrastructure. Keep learning!' },
-  { min: 4500, label: 'SOVEREIGNTY ADVOCATE',     color: '#f5c842', desc: 'Solid grasp of the fundamentals. The journey continues.' },
-  { min: 2500, label: 'DATA DEFENDER',            color: '#fe7c3f', desc: 'Learning the path to independence — you\'ve made a start!' },
-  { min: 0,    label: 'SOVEREIGNTY ROOKIE',       color: '#8fba9e', desc: 'Every sovereign journey begins with a single question.' },
+  {
+    min: 9500,
+    color: '#30ba78',
+    variants: [
+      { label: 'SUSE CERTIFIED SOVEREIGN',                       desc: 'Peak digital sovereignty mastery — SUSE would hire you!' },
+      { label: "LINUS TORVALDS' EMERGENCY CONTACT",              desc: "He hasn't called yet, but he could." },
+      { label: "TYPES 'SUDO MAKE ME A SANDWICH' AND IT WORKS",   desc: 'The terminal bends to your will now.' },
+      { label: 'THE CLOUD IS JUST YOUR SERVER FARM',             desc: 'As it should be. As it always should have been.' },
+    ],
+  },
+  {
+    min: 8000,
+    color: '#fe7c3f',
+    variants: [
+      { label: 'DIGITAL FREEDOM MASTER',                         desc: "Outstanding knowledge. You're ready for any sovereignty pathway." },
+      { label: 'COMPILES KERNEL FOR FUN, NOT PROFIT',            desc: 'Some people do sudoku. You do this.' },
+      { label: 'THEIR DOTFILES HAVE BETTER DOCS THAN MOST STARTUPS', desc: 'Meticulous. Possibly a little intense.' },
+      { label: 'EXPLAINS CONTAINERS TO THEIR GRANDPARENTS',      desc: "They didn't ask, but they're very proud of you." },
+    ],
+  },
+  {
+    min: 6500,
+    color: '#5fd4a0',
+    variants: [
+      { label: 'OPEN SOURCE GUARDIAN',                           desc: 'Strong advocate for open infrastructure. Keep learning!' },
+      { label: 'HAS OPINIONS ABOUT PACKAGE MANAGERS',            desc: 'Strong ones. Loud ones. Unprompted ones.' },
+      { label: "FRIENDS' UNOFFICIAL IT SUPPORT SINCE FOREVER",   desc: 'You said "it depends on your distro" and they nodded.' },
+      { label: 'NAMED THEIR HOME SERVER AFTER A GREEK GOD',      desc: 'Prometheus runs beautifully, by the way.' },
+    ],
+  },
+  {
+    min: 4500,
+    color: '#f5c842',
+    variants: [
+      { label: 'SOVEREIGNTY ADVOCATE',                           desc: 'Solid grasp of the fundamentals. The journey continues.' },
+      { label: 'EXPLAINS OPEN SOURCE AT DINNER PARTIES',         desc: "You've been uninvited to three BBQs. Worth it." },
+      { label: 'LINUX CURIOUS (IT\'S COMPLICATED)',              desc: "The relationship status nobody asked about." },
+      { label: 'CHANGED DEFAULT SEARCH ENGINE. BIG STEP.',       desc: 'Humble beginnings. Revolutionary consequences.' },
+    ],
+  },
+  {
+    min: 2500,
+    color: '#fe7c3f',
+    variants: [
+      { label: 'DATA DEFENDER',                                  desc: "Learning the path to independence — you've made a start!" },
+      { label: 'SUDO APPRENTICE',                                desc: 'With great power comes great permission errors.' },
+      { label: 'INSTALLS AD BLOCKER, FEELS DANGEROUS',           desc: 'The gateway drug to digital sovereignty.' },
+      { label: 'SKIMS THE PRIVACY POLICY (TOP PARAGRAPH)',       desc: 'Baby steps. Informed-ish steps, but baby steps.' },
+    ],
+  },
+  {
+    min: 0,
+    color: '#8fba9e',
+    variants: [
+      { label: 'SOVEREIGNTY ROOKIE',                             desc: 'Every sovereign journey begins with a single question.' },
+      { label: "CLICKED 'I AGREE' WITHOUT READING",              desc: 'Every sovereign journey begins with a single checkbox.' },
+      { label: 'STILL GOOGLES "WHAT IS LINUX"',                  desc: 'The search history is the first thing we fix.' },
+      { label: 'PROPRIETARY AND PROUD (FOR NOW)',                 desc: 'Blissful ignorance has an expiry date.' },
+    ],
+  },
 ];
 
 function getRank(score: number) {
-  return RANKS.find((r) => score >= r.min) ?? RANKS[RANKS.length - 1];
+  const tier = RANKS.find((r) => score >= r.min) ?? RANKS[RANKS.length - 1];
+  const variant = tier.variants[Math.floor(Math.random() * tier.variants.length)];
+  return { color: tier.color, label: variant.label, desc: variant.desc };
 }
 
 function ScoreTicker({ target }: { target: number }) {
@@ -44,7 +100,7 @@ function ScoreTicker({ target }: { target: number }) {
 export function FinalScreen({ state, questions, correctCount, onLeaderboard, onPlayAgain }: FinalScreenProps) {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const rank = getRank(state.score);
+  const rank = useMemo(() => getRank(state.score), [state.score]);
   const avgTime = state.answers.length
     ? Math.round(state.answers.reduce((sum, a) => sum + a.timeMs, 0) / state.answers.length / 100) / 10
     : 0;
