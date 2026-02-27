@@ -42,6 +42,36 @@ function todayStr() {
   return new Date().toISOString().split('T')[0];
 }
 
+function weekAgoISO() {
+  const d = new Date();
+  d.setDate(d.getDate() - 6);
+  d.setHours(0, 0, 0, 0);
+  return d.toISOString();
+}
+
+// ── Real-time subscription ──────────────────────────────────────────────────
+
+/**
+ * Subscribe to new leaderboard inserts for live display updates.
+ * Returns an unsubscribe function. No-op when Supabase is not configured.
+ */
+export function subscribeToLeaderboard(onNewEntry: () => void): () => void {
+  if (!supabase) return () => {};
+
+  const channel = supabase
+    .channel('leaderboard_realtime')
+    .on(
+      'postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'leaderboard' },
+      onNewEntry
+    )
+    .subscribe();
+
+  return () => {
+    supabase!.removeChannel(channel);
+  };
+}
+
 // ── Public API ───────────────────────────────────────────────────────────────
 
 export const db = {
@@ -86,8 +116,30 @@ export const db = {
       }
     }
 
-    // localStorage fallback
     const entries = readLocal().filter((e) => e.session_date === todayStr());
+    return entries.slice(0, limit);
+  },
+
+  async getWeekLeaderboard(limit = 10): Promise<LeaderboardEntry[]> {
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('leaderboard')
+          .select('*')
+          .gte('played_at', weekAgoISO())
+          .order('score', { ascending: false })
+          .limit(limit);
+
+        if (!error && data) return data as LeaderboardEntry[];
+      } catch {
+        // fall through to local
+      }
+    }
+
+    const cutoff = new Date(weekAgoISO());
+    const entries = readLocal().filter(
+      (e) => e.played_at && new Date(e.played_at) >= cutoff
+    );
     return entries.slice(0, limit);
   },
 

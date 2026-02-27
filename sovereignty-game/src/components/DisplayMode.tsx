@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { useLeaderboard } from '../hooks/useLeaderboard';
+import { useLeaderboard, LeaderboardScope } from '../hooks/useLeaderboard';
 import { Trophy, Wifi } from 'lucide-react';
 import { LeaderboardEntry } from '../types';
 
@@ -22,6 +22,15 @@ function getRank(score: number) {
 }
 
 const MEDAL = ['🥇', '🥈', '🥉'];
+
+const SCOPE_CYCLE: LeaderboardScope[] = ['today', 'week', 'alltime'];
+const SCOPE_DURATION_MS = 25_000;
+
+const SCOPE_META: Record<LeaderboardScope, { title: string; subtitle: string }> = {
+  today:   { title: "TODAY'S CHAMPIONS", subtitle: 'LIVE SCORES' },
+  week:    { title: "THIS WEEK'S BEST",  subtitle: 'WEEKLY RANKINGS' },
+  alltime: { title: 'ALL-TIME LEGENDS',  subtitle: 'HALL OF FAME' },
+};
 
 const STATEMENTS = [
   "Somewhere, an algorithm knows you better than your mum does.",
@@ -90,6 +99,41 @@ function RotatingStatement() {
   );
 }
 
+function ScopeProgressBar({ scopeIndex }: { scopeIndex: number }) {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    setProgress(0);
+    const start = Date.now();
+    const id = setInterval(() => {
+      const elapsed = Date.now() - start;
+      setProgress(Math.min((elapsed / SCOPE_DURATION_MS) * 100, 100));
+    }, 100);
+    return () => clearInterval(id);
+  }, [scopeIndex]);
+
+  return (
+    <div className="flex gap-1.5 mt-3">
+      {SCOPE_CYCLE.map((_, i) => (
+        <div
+          key={i}
+          className="flex-1 h-0.5 rounded-full overflow-hidden"
+          style={{ background: 'rgba(255,255,255,0.1)' }}
+        >
+          {i === scopeIndex ? (
+            <div
+              className="h-full rounded-full transition-none"
+              style={{ width: `${progress}%`, background: '#30ba78', boxShadow: '0 0 6px #30ba78' }}
+            />
+          ) : i < scopeIndex ? (
+            <div className="h-full rounded-full w-full" style={{ background: 'rgba(48,186,120,0.4)' }} />
+          ) : null}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function LeaderboardRow({ entry, index }: { entry: LeaderboardEntry; index: number }) {
   const rank = getRank(entry.score);
   return (
@@ -124,8 +168,20 @@ function LeaderboardRow({ entry, index }: { entry: LeaderboardEntry; index: numb
 }
 
 export function DisplayMode({ gameUrl }: DisplayModeProps) {
-  const { entries, loading } = useLeaderboard('today', true);
+  const [scopeIndex, setScopeIndex] = useState(0);
+  const scope = SCOPE_CYCLE[scopeIndex];
+  const meta = SCOPE_META[scope];
+
+  const { entries, loading } = useLeaderboard(scope, true);
   const [time, setTime] = useState(new Date());
+
+  // Auto-cycle through scopes
+  useEffect(() => {
+    const id = setInterval(() => {
+      setScopeIndex((i) => (i + 1) % SCOPE_CYCLE.length);
+    }, SCOPE_DURATION_MS);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     const id = setInterval(() => setTime(new Date()), 1000);
@@ -181,20 +237,27 @@ export function DisplayMode({ gameUrl }: DisplayModeProps) {
       </div>
 
       {/* Right panel: Leaderboard */}
-      <div className="flex flex-col flex-1 p-8 gap-6 overflow-hidden">
-        <div className="flex items-center gap-3">
-          <Trophy className="w-8 h-8 neon-yellow" />
-          <h2 className="font-orbitron font-black text-3xl" style={{ color: '#f5c842', textShadow: '0 0 15px #f5c842' }}>
-            TODAY'S CHAMPIONS
-          </h2>
-          {loading && <div className="w-3 h-3 rounded-full border-2 border-t-transparent animate-spin ml-2" style={{ borderColor: '#30ba78', borderTopColor: 'transparent' }} />}
+      <div className="flex flex-col flex-1 p-8 gap-4 overflow-hidden">
+        {/* Header with scope title */}
+        <div>
+          <div className="flex items-center gap-3">
+            <Trophy className="w-8 h-8 neon-yellow" />
+            <div>
+              <h2 className="font-orbitron font-black text-3xl" style={{ color: '#f5c842', textShadow: '0 0 15px #f5c842' }}>
+                {meta.title}
+              </h2>
+              <p className="font-orbitron text-xs tracking-widest opacity-40">{meta.subtitle}</p>
+            </div>
+            {loading && <div className="w-3 h-3 rounded-full border-2 border-t-transparent animate-spin ml-2" style={{ borderColor: '#30ba78', borderTopColor: 'transparent' }} />}
+          </div>
+          <ScopeProgressBar scopeIndex={scopeIndex} />
         </div>
 
         <div className="flex flex-col gap-2 flex-1 overflow-hidden">
           {entries.length === 0 ? (
             <div className="flex flex-col items-center justify-center flex-1 gap-4">
               <Trophy className="w-20 h-20 opacity-10" style={{ color: '#f5c842' }} />
-              <p className="font-orbitron text-xl opacity-30">NO SCORES YET TODAY</p>
+              <p className="font-orbitron text-xl opacity-30">NO SCORES YET</p>
               <p className="font-orbitron text-sm opacity-20">SCAN THE QR CODE TO BE FIRST!</p>
             </div>
           ) : (
@@ -208,7 +271,9 @@ export function DisplayMode({ gameUrl }: DisplayModeProps) {
           <div className="flex gap-6 glass rounded-xl px-6 py-3 neon-border-cyan">
             <div className="text-center">
               <div className="font-orbitron font-bold text-2xl neon-green">{entries.length}</div>
-              <div className="font-orbitron text-xs opacity-40">PLAYERS TODAY</div>
+              <div className="font-orbitron text-xs opacity-40">
+                {scope === 'today' ? 'PLAYERS TODAY' : scope === 'week' ? 'PLAYERS THIS WEEK' : 'ALL-TIME PLAYERS'}
+              </div>
             </div>
             <div className="text-center">
               <div className="font-orbitron font-bold text-2xl neon-orange">{entries[0]?.score.toLocaleString() ?? '—'}</div>
@@ -223,7 +288,6 @@ export function DisplayMode({ gameUrl }: DisplayModeProps) {
           </div>
         )}
       </div>
-
     </div>
   );
 }

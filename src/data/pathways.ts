@@ -264,7 +264,7 @@ export const pathways: Pathway[] = [
   {
     id: 'pathway-5',
     number: 5,
-    title: 'Private & Sovereign AI',
+    title: 'Sovereign AI',
     painSignal: 'The board wants AI but legal says no',
     icon: 'Brain',
     description: 'Every executive wants AI for competitive advantage, but no one wants their data leaked to third parties. The challenge is that the AI \'brain\' often lives in a foreign cloud, and every query sends your data outside your jurisdiction.',

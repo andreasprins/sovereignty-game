@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLeaderboard } from '../hooks/useLeaderboard';
+import { useLeaderboard, LeaderboardScope } from '../hooks/useLeaderboard';
 import { Trophy, Zap, RefreshCw } from 'lucide-react';
 import { LeaderboardEntry } from '../types';
 
@@ -51,14 +51,20 @@ function EntryRow({ entry, index, isPlayer }: { entry: LeaderboardEntry; index: 
         {entry.score.toLocaleString()}
       </span>
       <span className="text-xs opacity-40 shrink-0 hidden sm:block">
-        {entry.correct_answers ?? '?'}/10
+        {entry.correct_answers ?? '?'}/16
       </span>
     </div>
   );
 }
 
+const TABS: { scope: LeaderboardScope; label: string }[] = [
+  { scope: 'today',   label: "TODAY'S HEROES" },
+  { scope: 'week',    label: 'THIS WEEK' },
+  { scope: 'alltime', label: 'ALL TIME' },
+];
+
 export function LeaderboardScreen({ playerScore, playerName, onPlayAgain }: LeaderboardScreenProps) {
-  const [scope, setScope] = useState<'today' | 'alltime'>('today');
+  const [scope, setScope] = useState<LeaderboardScope>('today');
   const { entries, loading, refresh } = useLeaderboard(scope, true);
 
   const playerRank = entries.findIndex(
@@ -86,7 +92,7 @@ export function LeaderboardScreen({ playerScore, playerName, onPlayAgain }: Lead
 
       {/* Scope tabs */}
       <div className="flex gap-2 glass rounded-xl p-1 neon-border-cyan">
-        {(['today', 'alltime'] as const).map((s) => (
+        {TABS.map(({ scope: s, label }) => (
           <button
             key={s}
             onClick={() => setScope(s)}
@@ -97,7 +103,7 @@ export function LeaderboardScreen({ playerScore, playerName, onPlayAgain }: Lead
               border: scope === s ? '1px solid rgba(48,186,120,0.4)' : '1px solid transparent',
             }}
           >
-            {s === 'today' ? "TODAY'S HEROES" : 'ALL TIME'}
+            {label}
           </button>
         ))}
         <button onClick={refresh} className="px-3 py-2 rounded-lg transition-all" style={{ color: 'rgba(48,186,120,0.6)' }} title="Refresh">
