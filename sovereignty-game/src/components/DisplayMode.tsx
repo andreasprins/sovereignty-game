@@ -24,7 +24,7 @@ function getRank(score: number) {
 const MEDAL = ['🥇', '🥈', '🥉'];
 
 const SCOPE_CYCLE: LeaderboardScope[] = ['today', 'week', 'alltime'];
-const SCOPE_DURATION_MS = 25_000;
+const SCOPE_DURATION_MS = 3_000;
 
 const SCOPE_META: Record<LeaderboardScope, { title: string; subtitle: string }> = {
   today:   { title: "TODAY'S CHAMPIONS", subtitle: 'LIVE SCORES' },
@@ -173,18 +173,12 @@ export function DisplayMode({ gameUrl }: DisplayModeProps) {
   const meta = SCOPE_META[scope];
 
   const { entries, loading } = useLeaderboard(scope, true);
-  const [time, setTime] = useState(new Date());
 
   // Auto-cycle through scopes
   useEffect(() => {
     const id = setInterval(() => {
       setScopeIndex((i) => (i + 1) % SCOPE_CYCLE.length);
     }, SCOPE_DURATION_MS);
-    return () => clearInterval(id);
-  }, []);
-
-  useEffect(() => {
-    const id = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
 
@@ -230,10 +224,6 @@ export function DisplayMode({ gameUrl }: DisplayModeProps) {
           </div>
         </div>
 
-        {/* Clock */}
-        <div className="font-orbitron font-bold text-4xl neon-green">
-          {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-        </div>
       </div>
 
       {/* Right panel: Leaderboard */}
